@@ -4,7 +4,7 @@ public class Message {
     private final int customerId;
     private final String text;
 
-    Message(int customerId, String text) {
+    public Message(int customerId, String text) {
         this.customerId = customerId;
         this.text = text;
     }

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 
 @Service
@@ -35,13 +34,13 @@ public class MessageService {
         Plan plan = customer.getPlan();
         int freeMessages = plan.getFreeMessages();
 
-        Pair currentMonthFirstAndLastDay = new DateHelper().getCurrentMonthFirstAndLastDay();
-        Date startDate = (Date) currentMonthFirstAndLastDay.getLeft();
-        Date endDate = (Date) currentMonthFirstAndLastDay.getRight();
+        Pair<Date, Date> currentMonthFirstAndLastDay = new DateHelper().getCurrentMonthFirstAndLastDay();
+        Date startDate = currentMonthFirstAndLastDay.getLeft();
+        Date endDate = currentMonthFirstAndLastDay.getRight();
 
         int messagesSent = messageRepository.countByCustomerIdAndCreatedAtBetween(customer.getId(), startDate, endDate);
 
-        int numChargedMessages = Math.max(messagesSent - freeMessages, 0);
-        return plan.getPricePerMessage().multiply(new BigDecimal(numChargedMessages));
+        int billableNumOfMessages = Math.max(messagesSent - freeMessages, 0);
+        return plan.getPricePerMessage().multiply(new BigDecimal(billableNumOfMessages));
     }
 }

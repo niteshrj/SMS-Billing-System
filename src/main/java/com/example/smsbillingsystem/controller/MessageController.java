@@ -39,6 +39,6 @@ public class MessageController {
         if(customer == null) {
             return new ResponseEntity<>("Customer not found!", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(messageService.calculateCharge(customer), HttpStatus.OK);
+        return new ResponseEntity<>(messageService.calculateBillAmount(customer), HttpStatus.OK);
     }
 }

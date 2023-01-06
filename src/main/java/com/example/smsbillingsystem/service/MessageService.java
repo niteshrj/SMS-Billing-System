@@ -4,6 +4,8 @@ import com.example.smsbillingsystem.dao.MessageRepository;
 import com.example.smsbillingsystem.dto.CustomerDto;
 import com.example.smsbillingsystem.dto.MessageDto;
 import com.example.smsbillingsystem.model.Plan;
+import com.example.smsbillingsystem.utils.DateHelper;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,18 +28,16 @@ public class MessageService {
         messageDto.setCustomerId(customerId);
         messageDto.setText(message);
         messageRepository.save(messageDto);
-        return "Message sent successfully! Cost of message: 0";
+        return "Message sent successfully!";
     }
 
-    public BigDecimal calculateCharge(CustomerDto customer) {
+    public BigDecimal calculateBillAmount(CustomerDto customer) {
         Plan plan = customer.getPlan();
         int freeMessages = plan.getFreeMessages();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        Date startDate = calendar.getTime();
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        Date endDate = calendar.getTime();
+        Pair currentMonthFirstAndLastDay = new DateHelper().getCurrentMonthFirstAndLastDay();
+        Date startDate = (Date) currentMonthFirstAndLastDay.getLeft();
+        Date endDate = (Date) currentMonthFirstAndLastDay.getRight();
 
         int messagesSent = messageRepository.countByCustomerIdAndCreatedAtBetween(customer.getId(), startDate, endDate);
 

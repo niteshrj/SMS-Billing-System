@@ -9,13 +9,13 @@ public class CustomerDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_id_seq")
-    int id;
+    private int id;
 
     @Column
-    String name;
+    private String name;
 
     @Enumerated(EnumType.STRING)
-    Plan plan;
+    private Plan plan;
 
     public void setId(int id) {
         this.id = id;

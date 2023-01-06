@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -46,10 +46,7 @@ class MessageControllerTest {
     @Test
     void testSendMessage_success() {
         int customerId = 1;
-        CustomerDto customer = new CustomerDto();
-        customer.setId(customerId);
-        customer.setName("Bank");
-        customer.setPlan(Plan.BASIC);
+        CustomerDto customer = getCustomer(customerId);
         when(customerRepository.findById(customerId)).thenReturn(customer);
         when(messageService.sendSMS(any(String.class), any(int.class))).thenReturn("Message sent!");
         Message message = new Message(customerId, "sample message text");
@@ -74,12 +71,9 @@ class MessageControllerTest {
     @Test
     void testGetBillAmountForCurrentMonth_customerFound() {
         int customerId = 1;
-        CustomerDto customer = new CustomerDto();
-        customer.setId(customerId);
-        customer.setName("Bank");
-        customer.setPlan(Plan.BASIC);
+        CustomerDto customer = getCustomer(customerId);
         when(customerRepository.findById(customerId)).thenReturn(customer);
-        when(messageService.calculateCharge(customer)).thenReturn(BigDecimal.valueOf(200.0));
+        when(messageService.calculateBillAmount(customer)).thenReturn(BigDecimal.valueOf(200.0));
 
         ResponseEntity<?> response = messageController.getBillAmountForCurrentMonth(1);
 
@@ -87,4 +81,11 @@ class MessageControllerTest {
         assertEquals(BigDecimal.valueOf(200.0), response.getBody());
     }
 
+    private CustomerDto getCustomer(int customerId) {
+        CustomerDto customer = new CustomerDto();
+        customer.setId(customerId);
+        customer.setName("Bank");
+        customer.setPlan(Plan.BASIC);
+        return customer;
+    }
 }
